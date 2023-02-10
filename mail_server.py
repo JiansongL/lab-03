@@ -12,7 +12,9 @@ thisdir = pathlib.Path(__file__).parent.absolute() # path to directory of this f
 
 def load_mail() -> List[Dict[str, str]]:
     """
-    Loads the mail from the json file
+    Summary: Loads the mail from the json file
+    
+    Args:
 
     Returns:
         list: A list of dictionaries representing the mail entries
@@ -24,11 +26,26 @@ def load_mail() -> List[Dict[str, str]]:
 
 def save_mail(mail: List[Dict[str, str]]) -> None:
     """TODO: fill out this docstring (using the load_mail docstring as a guide)
+    	Summary: save the mail into mail_db.json and write the first 4 indents to it
+    	
+    	Args:
+        mail (list): The mail
+    	
+    	Returns:
+    		None
     """
     thisdir.joinpath('mail_db.json').write_text(json.dumps(mail, indent=4))
 
 def add_mail(mail_entry: Dict[str, str]) -> str:
     """TODO: fill out this docstring (using the load_mail docstring as a guide)
+    	Summary: load mail and add a new mail with its uuid to the mail entrys
+    	save the mail 
+    	
+    	Args:
+        mail_entry (dict): The mail entry of the mail
+    	
+    	Returns:
+    		str: a string of the uuid
     """
     mail = load_mail()
     mail.append(mail_entry)
@@ -38,6 +55,13 @@ def add_mail(mail_entry: Dict[str, str]) -> str:
 
 def delete_mail(mail_id: str) -> bool:
     """TODO: fill out this docstring (using the load_mail docstring as a guide)
+    	Summary: load mail and remove the specific mail from the mail entrys
+    	
+    	Args:
+        mail_id (str): The id of the mail
+    	
+    	Returns:
+    		bool: return trun if the mail successfully deleted False return fals if the mail was not found
     """
     mail = load_mail()
     for i, entry in enumerate(mail):
@@ -50,6 +74,14 @@ def delete_mail(mail_id: str) -> bool:
 
 def get_mail(mail_id: str) -> Optional[Dict[str, str]]:
     """TODO: fill out this docstring (using the load_mail docstring as a guide)
+    	Summary: load mail and get the mail entry search by mail id
+    	
+    	Args:
+        mail_id (str): The id of the mail
+    	
+    	Returns:
+    		Dict: a dictionary of the specific mail
+    		None: return none if no mail found
     """
     mail = load_mail()
     for entry in mail:
@@ -60,6 +92,13 @@ def get_mail(mail_id: str) -> Optional[Dict[str, str]]:
 
 def get_inbox(recipient: str) -> List[Dict[str, str]]:
     """TODO: fill out this docstring (using the load_mail docstring as a guide)
+    	Summary: load mail and create an inbox list for the specific recipient
+    	
+    	Args:
+        recipient (str): The recipient of the mail
+        
+    	Returns:
+    		list: a list of inbox dictionary
     """
     mail = load_mail()
     inbox = []
@@ -71,6 +110,13 @@ def get_inbox(recipient: str) -> List[Dict[str, str]]:
 
 def get_sent(sender: str) -> List[Dict[str, str]]:
     """TODO: fill out this docstring (using the load_mail docstring as a guide)
+    	Summary: load mail and create a sent list for the specific sender
+    	
+    	Args:
+        sender (str): The sender of the mail
+    	
+    	Returns:
+    		list: a list of sent dictionary
     """
     mail = load_mail()
     sent = []
@@ -85,6 +131,8 @@ def get_sent(sender: str) -> List[Dict[str, str]]:
 def add_mail_route():
     """
     Summary: Adds a new mail entry to the json file
+    
+    Args:
 
     Returns:
         str: The id of the new mail entry
@@ -107,7 +155,9 @@ def delete_mail_route(mail_id: str):
         bool: True if the mail was deleted, False otherwise
     """
     # TODO: implement this function
-    pass # remove this line
+    res = jsonify(delete_mail(mail_id))
+    res.status_code = 200 # Status code for "ok"
+    return res
 
 @app.route('/mail/<mail_id>', methods=['GET'])
 def get_mail_route(mail_id: str):
@@ -142,6 +192,11 @@ def get_inbox_route(recipient: str):
 # TODO: implement a rout e to get all mail entries for a sender
 # HINT: start with soemthing like this:
 #   @app.route('/mail/sent/<sender>', ...)
+@app.route('/mail/sent/<sender>', methods=['GET'])
+def get_all_mail(sender: str):
+	res = jsonify(get_sent(sender))
+	res.status_code = 200
+	return res
 
 
 if __name__ == '__main__':
